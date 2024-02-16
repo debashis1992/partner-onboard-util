@@ -1,8 +1,10 @@
 package com.partners.onboard.partneronboardws.service.verification.impl;
 
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
+import org.springframework.stereotype.Service;
 
-public class VehicleRTOVerification implements VerificationStrategy {
+@Service
+public class VehicleRTOVerificationStrategy implements VerificationStrategy {
     @Override
     public boolean verifyDocuments(int cityPin) throws RuntimeException {
         System.out.println("verifying vehicle detailed based on RTO");

@@ -5,9 +5,11 @@ import com.partners.onboard.partneronboardws.enums.DriverProcessStates;
 import com.partners.onboard.partneronboardws.exception.DriverStateFailureException;
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class AddProfileInfoState implements DriverState {
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {

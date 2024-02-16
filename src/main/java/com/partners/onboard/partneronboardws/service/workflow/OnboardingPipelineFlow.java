@@ -4,9 +4,11 @@ import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.OnboardingApplication;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OnboardingPipelineFlow {
 
     private List<Class<? extends DriverState>> flows;

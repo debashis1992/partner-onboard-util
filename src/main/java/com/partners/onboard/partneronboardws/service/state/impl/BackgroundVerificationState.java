@@ -7,9 +7,11 @@ import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
 import com.partners.onboard.partneronboardws.service.verification.impl.VerificationRules;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class BackgroundVerificationState implements DriverState {
 
     private VerificationRules verificationRules;

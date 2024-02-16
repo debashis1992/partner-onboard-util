@@ -6,12 +6,9 @@ import com.partners.onboard.partneronboardws.model.OnboardingApplication;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.enums.CompletionStates;
 import com.partners.onboard.partneronboardws.enums.DriverProcessStates;
-import com.partners.onboard.partneronboardws.exception.DriverStateFailureException;
-import com.partners.onboard.partneronboardws.model.Driver;
-import com.partners.onboard.partneronboardws.model.OnboardingApplication;
-import com.partners.onboard.partneronboardws.service.state.DriverState;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class SignupApplicationState implements DriverState {
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {

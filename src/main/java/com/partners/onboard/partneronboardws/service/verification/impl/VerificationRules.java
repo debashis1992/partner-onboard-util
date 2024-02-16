@@ -1,27 +1,41 @@
 package com.partners.onboard.partneronboardws.service.verification.impl;
 
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class VerificationRules {
 
     private Map<Integer, List<VerificationStrategy>> verificationRulesController;
+    private AadharVerificationStrategy aadharVerificationStrategy;
+    private PanVerificationStrategy panVerificationStrategy;
+    private VehicleRTOVerificationStrategy vehicleRTOVerificationStrategy;
+    private VehicleInsuranceVerificationStrategy vehicleInsuranceVerificationStrategy;
 
-    public VerificationRules() {
+    public VerificationRules(@Autowired AadharVerificationStrategy aadharVerificationStrategy, @Autowired PanVerificationStrategy panVerificationStrategy,
+                             @Autowired VehicleRTOVerificationStrategy vehicleRTOVerificationStrategy,
+                             @Autowired VehicleInsuranceVerificationStrategy vehicleInsuranceVerificationStrategy) {
         verificationRulesController = new HashMap<>();
+        this.aadharVerificationStrategy=aadharVerificationStrategy;
+        this.panVerificationStrategy=panVerificationStrategy;
+        this.vehicleRTOVerificationStrategy=vehicleRTOVerificationStrategy;
+        this.vehicleInsuranceVerificationStrategy=vehicleInsuranceVerificationStrategy;
         initializeSomeData();
     }
 
     private void initializeSomeData() {
-        verificationRulesController.put(0, List.of(new AadharVerificationStrategy()));
-        verificationRulesController.put(2, List.of(new AadharVerificationStrategy(), new VehicleInsuranceVerificationStrategy()));
-        verificationRulesController.put(3, List.of(new PanVerificationStrategy(), new AadharVerificationStrategy()));
-        verificationRulesController.put(4, List.of(new AadharVerificationStrategy(), new VehicleRTOVerification()));
-        verificationRulesController.put(5, List.of(new PanVerificationStrategy(), new VehicleRTOVerification(), new VehicleInsuranceVerificationStrategy()));
+        verificationRulesController.put(0, List.of(aadharVerificationStrategy));
+        verificationRulesController.put(1, List.of(aadharVerificationStrategy));
+        verificationRulesController.put(2, List.of(aadharVerificationStrategy, vehicleInsuranceVerificationStrategy));
+        verificationRulesController.put(3, List.of(panVerificationStrategy, aadharVerificationStrategy));
+        verificationRulesController.put(4, List.of(aadharVerificationStrategy, vehicleRTOVerificationStrategy));
+        verificationRulesController.put(5, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
     }
 
     public void addRule(int cityPin, VerificationStrategy verificationStrategy) {
