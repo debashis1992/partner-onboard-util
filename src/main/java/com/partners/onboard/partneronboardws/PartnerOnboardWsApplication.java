@@ -16,11 +16,6 @@ import java.util.Map;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class PartnerOnboardWsApplication {
-
-//	public static DriverRepository driverRepository = new DriverRepository();
-
-//	public static VerificationRules verificationRules = new VerificationRules();
-
 	@Autowired
 	private VerificationRules verificationRules;
 
@@ -29,12 +24,9 @@ public class PartnerOnboardWsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PartnerOnboardWsApplication.class, args);
-
-
-
 	}
 
-	@PostConstruct
+//	@PostConstruct
 	public void testSomeActions() {
 		// driver adding profile info from collection form
 		Map<String, String> attributes = Map.of(

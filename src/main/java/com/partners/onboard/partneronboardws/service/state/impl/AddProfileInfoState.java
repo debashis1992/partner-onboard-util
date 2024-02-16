@@ -15,7 +15,7 @@ public class AddProfileInfoState implements DriverState {
     public void processApplication(Driver driver) throws DriverStateFailureException {
 
         try {
-            System.out.println("Adding profile info for driver here");
+
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO.name()+CompletionStates._STARTED);
             driver.getApplication().getApplicationInstances().add(this.getClass());
         } catch (DriverStateFailureException e) {

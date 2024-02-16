@@ -35,6 +35,10 @@ public class Driver implements ModuleClient {
 
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public DriverState getDriverState() {
         return driverState;
     }

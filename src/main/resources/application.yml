@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: partners-onboarding-ws
+
+ttl:
+  verification-link-in-seconds: 900
