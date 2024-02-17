@@ -11,14 +11,16 @@ import org.springframework.stereotype.Service;
 public class DocumentsCollectionState implements DriverState {
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {
+        isValidRequest(driver);
         try {
+
             System.out.println("starting documents collection process");
             driver.getApplication().setStatus(DriverOnboardingProcessStates.DOCUMENT_COLLECTION.name()+ CompletionStates._STARTED);
 
             uploadDocuments();
             driver.getApplication().setStatus(DriverOnboardingProcessStates.DOCUMENT_COLLECTION.name() + CompletionStates._COMPLETED);
             System.out.println("completed documents collection process");
-            driver.getApplication().getApplicationInstances().add(this.getClass());
+            driver.getApplication().getCompletedApplicationInstances().add(this.getClass());
 
         } catch (RuntimeException e) {
             System.out.println("Exception occurred: "+e.getMessage());

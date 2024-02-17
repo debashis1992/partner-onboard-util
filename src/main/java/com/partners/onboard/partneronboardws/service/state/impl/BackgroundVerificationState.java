@@ -27,7 +27,7 @@ public class BackgroundVerificationState implements DriverState {
             triggerBackgroundVerificationStep(driver);
 
             driver.getApplication().setStatus(DriverOnboardingProcessStates.BACKGROUND_VERIFICATION.name()+CompletionStates._COMPLETED);
-            driver.getApplication().getApplicationInstances().add(this.getClass());
+            driver.getApplication().getCompletedApplicationInstances().add(this.getClass());
         } catch (DriverStateFailureException e) {
             System.out.println("background verification failed due to error: "+e.getMessage());
             driver.getApplication().setFailedReason(e.getMessage());

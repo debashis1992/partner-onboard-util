@@ -4,9 +4,11 @@ import com.partners.onboard.partneronboardws.model.documents.DriverDocuments;
 import com.partners.onboard.partneronboardws.model.documents.VehicleRegistration;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.SignupApplicationState;
+import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public class Driver implements ModuleClient {
 
     String id;
@@ -77,7 +79,6 @@ public class Driver implements ModuleClient {
 
     public DriverState setAndGetDriverState(DriverState driverState) {
         this.driverState = driverState;
-        this.application.applicationInstances.add(driverState.getClass());
         return this.driverState;
     }
 

@@ -11,18 +11,15 @@ import java.util.List;
 @Service
 public class OnboardingPipelineFlow {
 
-    private List<Class<? extends DriverState>> flows;
-
-    public OnboardingPipelineFlow() {
-        flows = List.of(
+    public static final List<Class<? extends DriverState>> flows = List.of(
              SignupApplicationState.class,
+                VerifyProfileState.class,
                 AddProfileInfoState.class,
                 DocumentsCollectionState.class,
                 BackgroundVerificationState.class,
                 ShipTrackingDeviceState.class,
                 ReadyToRideState.class
-        );
-    }
+    );
 
     public List<Class<? extends DriverState>> getFlows() {
         return flows;
@@ -31,7 +28,7 @@ public class OnboardingPipelineFlow {
     public void triggerRetry(Driver driver) {
 
         OnboardingApplication application = driver.getApplication();
-        int i=application.getApplicationInstances().size()-1;
+        int i=application.getCompletedApplicationInstances().size()-1;
 
         if(i== flows.size()) {
             System.out.println("all stages are completed. Nothing to retry for driverId: "+driver.getId());

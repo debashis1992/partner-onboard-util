@@ -65,6 +65,7 @@ public class DriverController {
         return ResponseEntity.ok().body(driverService.verifyEmail(driverEmailVerificationRequest));
     }
 
+
     @GetMapping("/state")
     public ResponseEntity<Optional<Driver>> getDriverStateInfo(@Param("id") @NotEmpty @NotNull String id) {
 

@@ -6,6 +6,7 @@ import com.partners.onboard.partneronboardws.model.DriverEmailVerificationReques
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.AddProfileInfoState;
+import com.partners.onboard.partneronboardws.service.state.impl.VerifyProfileState;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,6 +30,9 @@ public class DriverService {
 
     @Value("${ttl.verification-link-in-seconds}")
     private int verificationLinkTtl;
+
+    @Autowired
+    private VerifyProfileState verifyProfileState;
 
     @Autowired
     private AddProfileInfoState addProfileInfoState;
@@ -65,26 +70,31 @@ public class DriverService {
 
     public Driver verifyEmail(DriverEmailVerificationRequest driverEmailVerificationRequest) throws VerifyLinkExpiredException {
 
-        Date callbackUrlTimestamp = driverEmailVerificationRequest.getCallbackUrlTimestamp();
-        Date t1 = new Date();
-        long diff = (t1.getTime() - callbackUrlTimestamp.getTime())/1000;
-        if(diff > verificationLinkTtl)
-            throw new VerifyLinkExpiredException("verification link expired");
-
-        // mark the driver as verified
-
         Optional<Driver> driver = driverRepository.getDriverByEmail(driverEmailVerificationRequest.getEmail());
         if(driver.isPresent()) {
-            driver.get().setAndGetDriverState(addProfileInfoState);
-            return driver.get();
+            DriverState driverState = driver.get().setAndGetDriverState(verifyProfileState);
+//            driverState.processApplication(driver.get());
+            verifyProfileState.processApplication(driver.get());
+            Driver driverOut = verifyProfileState.processApplication(driverEmailVerificationRequest, driver.get());
+            return driverOut;
         }
 
-        log.error("Unknown error. Driver not found but clicked on verify");
-        return null;
+        throw new VerifyLinkExpiredException("driver with email "+driverEmailVerificationRequest.getEmail()+" was not found!");
     }
 
     public Optional<Driver> getDriverDetails(String id) {
         return driverRepository.getDriver(id);
+    }
+
+    public void addProfileInfo(String id, Map<String, String> attributesMap) {
+
+        Optional<Driver> driverOptional = driverRepository.getDriver(id);
+        if(driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+
+            addProfileInfoState.processApplication(driver);
+            addProfileInfoState.updateDriverApplication(driver, attributesMap);
+        }
     }
 
 

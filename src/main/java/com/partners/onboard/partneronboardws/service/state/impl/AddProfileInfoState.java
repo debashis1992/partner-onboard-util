@@ -4,6 +4,7 @@ import com.partners.onboard.partneronboardws.enums.CompletionStates;
 import com.partners.onboard.partneronboardws.enums.DriverProcessStates;
 import com.partners.onboard.partneronboardws.exception.DriverStateFailureException;
 import com.partners.onboard.partneronboardws.model.Driver;
+import com.partners.onboard.partneronboardws.model.OnboardingApplication;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +15,12 @@ public class AddProfileInfoState implements DriverState {
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {
 
-        try {
+        isValidRequest(driver);
 
+        try {
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO.name()+CompletionStates._STARTED);
-            driver.getApplication().getApplicationInstances().add(this.getClass());
+            driver.getApplication().getCompletedApplicationInstances().add(this.getClass());
         } catch (DriverStateFailureException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
             driver.getApplication().setFailedReason(e.getMessage());
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO.name() + CompletionStates._FAILED.toString());
             throw new DriverStateFailureException(e.getMessage());
@@ -44,7 +45,6 @@ public class AddProfileInfoState implements DriverState {
             System.out.println("completed adding profile information");
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO + CompletionStates._COMPLETED.toString());
         } catch (RuntimeException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
             driver.getApplication().setFailedReason(e.getMessage());
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO + CompletionStates._FAILED.toString());
         }
