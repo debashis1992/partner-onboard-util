@@ -7,16 +7,19 @@ import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.AddProfileInfoState;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -24,13 +27,16 @@ import java.util.Optional;
 public class DriverService {
 
     @Value("${ttl.verification-link-in-seconds}")
-    int verificationLinkTtl;
+    private int verificationLinkTtl;
 
     @Autowired
     private AddProfileInfoState addProfileInfoState;
 
     @Autowired
     private DriverRepository driverRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public Driver signUp(String email) {
         // driver signup
@@ -43,6 +49,16 @@ public class DriverService {
         DriverState state = driver.getDriverState();
         state.processApplication(driver);
         log.info("Created a new driver with id: "+driver.getId());
+
+        CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> notificationService.sendEmail());
+        completableFuture.whenComplete((res, throwable) -> {
+            if(throwable==null) {
+                System.out.println("sent verification email");
+            } else {
+                log.error("Exception occurred while sending email: {}", throwable.getMessage());
+            }
+        });
+
         return driver;
     }
 
@@ -50,21 +66,14 @@ public class DriverService {
     public Driver verifyEmail(DriverEmailVerificationRequest driverEmailVerificationRequest) throws VerifyLinkExpiredException {
 
         Date callbackUrlTimestamp = driverEmailVerificationRequest.getCallbackUrlTimestamp();
-        LocalDateTime t1 = LocalDateTime.now();
-//        LocalDateTime t2 =
-                if(callbackUrlTimestamp.toInstant().isAfter(Instant.ofEpochSecond(verificationLinkTtl))) {
-                    throw new VerifyLinkExpiredException("verification link expired");
-                }
-
-//        Duration duration = Duration.between(t1, t2);
-//
-//        long diff = duration.toSeconds();
-//        if(diff > verificationLinkTtl)
-//            throw new VerifyLinkExpiredException("verification link expired");
+        Date t1 = new Date();
+        long diff = (t1.getTime() - callbackUrlTimestamp.getTime())/1000;
+        if(diff > verificationLinkTtl)
+            throw new VerifyLinkExpiredException("verification link expired");
 
         // mark the driver as verified
 
-        Optional<Driver> driver = driverRepository.getDriver(driverEmailVerificationRequest.getEmail());
+        Optional<Driver> driver = driverRepository.getDriverByEmail(driverEmailVerificationRequest.getEmail());
         if(driver.isPresent()) {
             driver.get().setAndGetDriverState(addProfileInfoState);
             return driver.get();
@@ -73,5 +82,11 @@ public class DriverService {
         log.error("Unknown error. Driver not found but clicked on verify");
         return null;
     }
+
+    public Optional<Driver> getDriverDetails(String id) {
+        return driverRepository.getDriver(id);
+    }
+
+
 
 }

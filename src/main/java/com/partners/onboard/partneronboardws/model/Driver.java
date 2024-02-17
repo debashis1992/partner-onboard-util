@@ -77,6 +77,7 @@ public class Driver implements ModuleClient {
 
     public DriverState setAndGetDriverState(DriverState driverState) {
         this.driverState = driverState;
+        this.application.applicationInstances.add(driverState.getClass());
         return this.driverState;
     }
 

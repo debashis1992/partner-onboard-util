@@ -17,12 +17,6 @@ public class DriverRepository {
     ConcurrentHashMap<String, String> driverEntryMap = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Driver> driverDB = new ConcurrentHashMap<>();
 
-//    @Autowired
-//    public DriverRepository() {
-//        driverEntryMap = new ConcurrentHashMap<>();
-//        driverDB = new ConcurrentHashMap<>();
-//    }
-
     public void addDriver(Driver driver) {
         if(driverEntryMap.containsKey(driver.getEmail()))
             throw new DriverAlreadyExistsException("driver with email "+driver.getEmail()+" already exists!!!");

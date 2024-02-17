@@ -1,7 +1,6 @@
 package com.partners.onboard.partneronboardws.controller;
 
 import com.partners.onboard.partneronboardws.exception.VerifyLinkExpiredException;
-import com.partners.onboard.partneronboardws.model.ApiResponse;
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.DriverEmailVerificationRequest;
 import com.partners.onboard.partneronboardws.model.DriverResponse;
@@ -11,13 +10,16 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/driver")
@@ -25,8 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class DriverController {
 
+    @Value("${url.base}")
+    String baseUrl;
+
     @Autowired
     private DriverService driverService;
+
 
     @PostMapping("/sign-up")
     public ResponseEntity<DriverResponse> signUp(@Param("email") @NotEmpty(message = "email cannot be empty")
@@ -38,13 +44,32 @@ public class DriverController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/generate-verify-link")
+    public ResponseEntity<DriverEmailVerificationRequest> generateVerifyLink(@Param("email") @NotEmpty(message = "email cannot be empty")
+                                                                             @NotNull @Email(message = "please use a valid email") String email) throws ParseException {
+
+        log.info("creating verify link for email: {}", email);
+        DriverEmailVerificationRequest driverEmailVerificationRequest = DriverEmailVerificationRequest.builder().email(email)
+                .callbackUrlTimestamp(
+                        new Date()
+                        //DateUtils.getCurrentDateBasedOnDateSerializerFormat()
+                ).build();
+        return ResponseEntity.ok().location(URI.create(baseUrl+"/verify")).body(driverEmailVerificationRequest);
+
+    }
+
     @PostMapping("/verify")
     public ResponseEntity<Driver> confirmDriverEmailLinkVerification(@RequestBody @Validated DriverEmailVerificationRequest driverEmailVerificationRequest) throws VerifyLinkExpiredException {
 
         log.info("got confirm verification request for driver : {}", driverEmailVerificationRequest.getEmail());
         return ResponseEntity.ok().body(driverService.verifyEmail(driverEmailVerificationRequest));
-
     }
 
+    @GetMapping("/state")
+    public ResponseEntity<Optional<Driver>> getDriverStateInfo(@Param("id") @NotEmpty @NotNull String id) {
+
+        return ResponseEntity.ok().body(driverService.getDriverDetails(id));
+
+    }
 
 }
