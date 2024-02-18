@@ -1,9 +1,11 @@
 package com.partners.onboard.partneronboardws.controller;
 
+import com.partners.onboard.partneronboardws.exception.DriverNotFoundException;
 import com.partners.onboard.partneronboardws.exception.VerifyLinkExpiredException;
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.DriverEmailVerificationRequest;
 import com.partners.onboard.partneronboardws.model.DriverResponse;
+import com.partners.onboard.partneronboardws.service.DriverDocumentService;
 import com.partners.onboard.partneronboardws.service.DriverService;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,19 +21,23 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/driver")
 @Validated
 @Slf4j
-public class DriverController {
+public class DriverActionsController {
 
     @Value("${url.base}")
     String baseUrl;
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private DriverDocumentService driverDocumentService;
 
 
     @PostMapping("/sign-up")
@@ -65,12 +71,21 @@ public class DriverController {
         return ResponseEntity.ok().body(driverService.verifyEmail(driverEmailVerificationRequest));
     }
 
+    @GetMapping("/required-documents")
+    public ResponseEntity<List<String>> getRequiredDocuments(@Param("email") @NotEmpty @NotNull String email) throws DriverNotFoundException {
+
+        return ResponseEntity.ok(driverDocumentService.getRequiredDocuments(email));
+    }
+
+    @
+
+
+
+
 
     @GetMapping("/state")
-    public ResponseEntity<Optional<Driver>> getDriverStateInfo(@Param("id") @NotEmpty @NotNull String id) {
-
-        return ResponseEntity.ok().body(driverService.getDriverDetails(id));
-
+    public ResponseEntity<Optional<Driver>> getDriverStateInfo(@Param("email") @NotEmpty @NotNull String email) {
+        return ResponseEntity.ok().body(driverService.getDriverDetails(email));
     }
 
 }

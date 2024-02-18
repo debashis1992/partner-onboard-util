@@ -82,8 +82,9 @@ public class DriverService {
         throw new VerifyLinkExpiredException("driver with email "+driverEmailVerificationRequest.getEmail()+" was not found!");
     }
 
-    public Optional<Driver> getDriverDetails(String id) {
-        return driverRepository.getDriver(id);
+
+    public Optional<Driver> getDriverDetails(String email) {
+        return driverRepository.getDriverByEmail(email);
     }
 
     public void addProfileInfo(String id, Map<String, String> attributesMap) {
@@ -96,7 +97,5 @@ public class DriverService {
             addProfileInfoState.updateDriverApplication(driver, attributesMap);
         }
     }
-
-
 
 }

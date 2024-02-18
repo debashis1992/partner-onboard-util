@@ -12,11 +12,11 @@ import java.util.Map;
 @Service
 public class VerificationRules {
 
-    private Map<Integer, List<VerificationStrategy>> verificationRulesController;
-    private AadharVerificationStrategy aadharVerificationStrategy;
-    private PanVerificationStrategy panVerificationStrategy;
-    private VehicleRTOVerificationStrategy vehicleRTOVerificationStrategy;
-    private VehicleInsuranceVerificationStrategy vehicleInsuranceVerificationStrategy;
+    private final Map<Integer, List<VerificationStrategy>> verificationRulesController;
+    private final AadharVerificationStrategy aadharVerificationStrategy;
+    private final PanVerificationStrategy panVerificationStrategy;
+    private final VehicleRTOVerificationStrategy vehicleRTOVerificationStrategy;
+    private final VehicleInsuranceVerificationStrategy vehicleInsuranceVerificationStrategy;
 
     public VerificationRules(@Autowired AadharVerificationStrategy aadharVerificationStrategy, @Autowired PanVerificationStrategy panVerificationStrategy,
                              @Autowired VehicleRTOVerificationStrategy vehicleRTOVerificationStrategy,
@@ -40,7 +40,7 @@ public class VerificationRules {
 
     public void addRule(int cityPin, VerificationStrategy verificationStrategy) {
         if(verificationStrategy!=null) {
-            List<VerificationStrategy> v = verificationRulesController.getOrDefault(cityPin, new ArrayList<>());
+            var v = verificationRulesController.getOrDefault(cityPin, new ArrayList<>());
             v.add(verificationStrategy);
         }
     }
@@ -53,7 +53,7 @@ public class VerificationRules {
     }
 
     public void createNewRule(int cityPin, List<VerificationStrategy> verificationStrategies) {
-        List<VerificationStrategy> v = verificationRulesController.getOrDefault(cityPin, new ArrayList<>());
+        var v = verificationRulesController.getOrDefault(cityPin, new ArrayList<>());
         v.addAll(verificationStrategies);
         verificationRulesController.put(cityPin, v);
     }

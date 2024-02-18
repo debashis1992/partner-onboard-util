@@ -19,6 +19,7 @@ public class Driver implements ModuleClient {
     DriverState driverState;
     OnboardingApplication application;
 
+
     DriverDocuments driverDocuments;
     VehicleRegistration vehicleRegistration;
 
