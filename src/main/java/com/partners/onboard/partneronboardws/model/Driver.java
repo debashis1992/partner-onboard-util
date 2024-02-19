@@ -1,14 +1,15 @@
 package com.partners.onboard.partneronboardws.model;
 
-import com.partners.onboard.partneronboardws.model.documents.DriverDocuments;
-import com.partners.onboard.partneronboardws.model.documents.VehicleRegistration;
+import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.SignupApplicationState;
-import lombok.Getter;
+import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-@Getter
+@Data
 public class Driver implements ModuleClient {
 
     String id;
@@ -20,62 +21,16 @@ public class Driver implements ModuleClient {
     OnboardingApplication application;
 
 
-    DriverDocuments driverDocuments;
-    VehicleRegistration vehicleRegistration;
-
-    public String getId() {
-        return id;
-    }
+    List<Document> documents;
 
     public Driver() {
         id = UUID.randomUUID().toString();
         driverState = new SignupApplicationState();
         // create a new application for the driver
         application = OnboardingApplication.createNewApplication(this);
-        this.driverDocuments = new DriverDocuments();
-        this.vehicleRegistration = new VehicleRegistration();
+        this.documents = new ArrayList<>();
         this.cityPin = (int)(Math.random() * 100);
 
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public DriverState getDriverState() {
-        return driverState;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPhoneNumber(int phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setApplication(OnboardingApplication application) {
-        this.application = application;
-    }
-
-    public int getCityPin() {
-        return cityPin;
-    }
-
-    public void setCityPin(int cityPin) {
-        this.cityPin = cityPin;
-    }
-
-    public OnboardingApplication getApplication() {
-        return application;
     }
 
     public DriverState setAndGetDriverState(DriverState driverState) {
@@ -91,19 +46,10 @@ public class Driver implements ModuleClient {
         this.phoneNumber = phoneNumber;
         this.driverState = new SignupApplicationState();
 
-        this.driverDocuments = new DriverDocuments();
-        this.vehicleRegistration = new VehicleRegistration();
+        this.documents = new ArrayList<>();
         this.cityPin = cityPin;
     }
 
-
-    public DriverDocuments getDriverDocuments() {
-        return driverDocuments;
-    }
-
-    public VehicleRegistration getVehicleRegistration() {
-        return vehicleRegistration;
-    }
 
     @Override
     public String toString() {

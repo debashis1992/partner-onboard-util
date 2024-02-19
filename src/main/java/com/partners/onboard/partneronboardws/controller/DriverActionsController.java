@@ -2,11 +2,14 @@ package com.partners.onboard.partneronboardws.controller;
 
 import com.partners.onboard.partneronboardws.exception.DriverNotFoundException;
 import com.partners.onboard.partneronboardws.exception.VerifyLinkExpiredException;
+import com.partners.onboard.partneronboardws.model.ApiResponse;
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.DriverEmailVerificationRequest;
 import com.partners.onboard.partneronboardws.model.DriverResponse;
+import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.service.DriverDocumentService;
 import com.partners.onboard.partneronboardws.service.DriverService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +20,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.text.ParseException;
@@ -60,6 +64,8 @@ public class DriverActionsController {
                         new Date()
                         //DateUtils.getCurrentDateBasedOnDateSerializerFormat()
                 ).build();
+
+        //send this payload to notifier-ws to email the user
         return ResponseEntity.ok().location(URI.create(baseUrl+"/verify")).body(driverEmailVerificationRequest);
 
     }
@@ -77,9 +83,29 @@ public class DriverActionsController {
         return ResponseEntity.ok(driverDocumentService.getRequiredDocuments(email));
     }
 
-    @
+    @PostMapping(value = "/upload-document")
+    public ResponseEntity<ApiResponse> uploadDocuments(@RequestParam("id") @NotEmpty @NotNull String id,
+                                                       @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) {
+
+        driverDocumentService.saveDocument(id, file, document);
+        return ResponseEntity.ok(ApiResponse.builder().message("documents uploaded successfully").build());
+    }
+
+    @PostMapping("/update-document")
+    public ResponseEntity<ApiResponse> updateDocument(@RequestParam("id") @NotEmpty @NotNull String id,
+                                                      @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) {
+
+        driverDocumentService.updateDocument(id, file, document);
+        return ResponseEntity.ok(ApiResponse.builder().message("document was updated successfully").build());
+    }
 
 
+    @PostMapping("/trigger-document-verification")
+    public ResponseEntity<ApiResponse> triggerDocumentVerification(@Param("id") @NotEmpty @NotNull String id) {
+
+        driverDocumentService.triggerDocumentVerification(id);
+        return ResponseEntity.ok(ApiResponse.builder().message("document verification is in progress").build());
+    }
 
 
 

@@ -4,14 +4,17 @@ import com.partners.onboard.partneronboardws.enums.CompletionStates;
 import com.partners.onboard.partneronboardws.enums.DriverOnboardingProcessStates;
 import com.partners.onboard.partneronboardws.exception.DriverStateFailureException;
 import com.partners.onboard.partneronboardws.model.Driver;
+import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
 import com.partners.onboard.partneronboardws.service.verification.impl.VerificationRules;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-@Service
+@Service @Slf4j
 public class BackgroundVerificationState implements DriverState {
 
     private VerificationRules verificationRules;
@@ -22,6 +25,7 @@ public class BackgroundVerificationState implements DriverState {
     public void processApplication(Driver driver) throws DriverStateFailureException {
 
         try {
+            isValidRequest(driver);
             System.out.println("starting background verification process");
             driver.getApplication().setStatus(DriverOnboardingProcessStates.BACKGROUND_VERIFICATION.name()+ CompletionStates._STARTED);
             triggerBackgroundVerificationStep(driver);
@@ -48,6 +52,24 @@ public class BackgroundVerificationState implements DriverState {
         for(VerificationStrategy strategy : verificationStrategyList) {
             strategy.verifyDocuments(driver.getCityPin());
         }
+
+        List<Document> documents = driver.getDocuments();
+        if(documents.isEmpty()) {
+            CompletableFuture<Boolean> completableFutures = CompletableFuture.supplyAsync(() -> {
+                try {
+                    documents.forEach(this::verifyDocument);
+                    return true;
+                } catch (RuntimeException e) {
+                    log.error("exception occurred: {}", e.getMessage());
+                    return false;
+                }
+            });
+        }
+        return true;
+    }
+
+    public boolean verifyDocument(Document document) throws RuntimeException {
+        //calling document-verification-svc and verifying document
         return true;
     }
 }

@@ -6,6 +6,7 @@ import com.partners.onboard.partneronboardws.model.DriverEmailVerificationReques
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.AddProfileInfoState;
+import com.partners.onboard.partneronboardws.service.state.impl.DocumentsCollectionState;
 import com.partners.onboard.partneronboardws.service.state.impl.VerifyProfileState;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Not;
@@ -36,6 +37,9 @@ public class DriverService {
 
     @Autowired
     private AddProfileInfoState addProfileInfoState;
+
+    @Autowired
+    private DocumentsCollectionState documentsCollectionState;
 
     @Autowired
     private DriverRepository driverRepository;
@@ -95,6 +99,9 @@ public class DriverService {
 
             addProfileInfoState.processApplication(driver);
             addProfileInfoState.updateDriverApplication(driver, attributesMap);
+
+            //after profile info is added, we'll make the current state as DocumentCollectionState
+            driver.setAndGetDriverState(documentsCollectionState);
         }
     }
 

@@ -36,6 +36,10 @@ public class VerificationRules {
         verificationRulesController.put(3, List.of(panVerificationStrategy, aadharVerificationStrategy));
         verificationRulesController.put(4, List.of(aadharVerificationStrategy, vehicleRTOVerificationStrategy));
         verificationRulesController.put(5, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
+        verificationRulesController.put(6, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
+        verificationRulesController.put(7, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
+        verificationRulesController.put(8, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
+        verificationRulesController.put(9, List.of(panVerificationStrategy, vehicleRTOVerificationStrategy, vehicleInsuranceVerificationStrategy));
     }
 
     public void addRule(int cityPin, VerificationStrategy verificationStrategy) {

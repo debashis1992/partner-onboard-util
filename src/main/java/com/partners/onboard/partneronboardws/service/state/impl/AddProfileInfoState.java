@@ -6,11 +6,12 @@ import com.partners.onboard.partneronboardws.exception.DriverStateFailureExcepti
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.OnboardingApplication;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
+@Service @Slf4j
 public class AddProfileInfoState implements DriverState {
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {
@@ -21,6 +22,7 @@ public class AddProfileInfoState implements DriverState {
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO.name()+CompletionStates._STARTED);
             driver.getApplication().getCompletedApplicationInstances().add(this.getClass());
         } catch (DriverStateFailureException e) {
+            log.error("Exception occurred: {}", e.getMessage());
             driver.getApplication().setFailedReason(e.getMessage());
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO.name() + CompletionStates._FAILED.toString());
             throw new DriverStateFailureException(e.getMessage());
@@ -45,6 +47,7 @@ public class AddProfileInfoState implements DriverState {
             System.out.println("completed adding profile information");
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO + CompletionStates._COMPLETED.toString());
         } catch (RuntimeException e) {
+            log.error("Exception occurred: {}", e.getMessage());
             driver.getApplication().setFailedReason(e.getMessage());
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO + CompletionStates._FAILED.toString());
         }

@@ -24,7 +24,7 @@ public class DriverInfoController {
     @PostMapping("/add")
     public void addProfileInfo(@Param("id") @NotEmpty @NotNull String id, @RequestBody String requestBody) throws IOException {
 
-        Map<String, String> attributes = objectMapper.readValue(requestBody, Map.class);
+        var attributes = objectMapper.readValue(requestBody, Map.class);
         driverService.addProfileInfo(id, attributes);
     }
 
