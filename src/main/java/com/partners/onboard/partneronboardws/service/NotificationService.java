@@ -11,7 +11,7 @@ public class NotificationService {
         try {
             Thread.sleep(1000);
             return true;
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

@@ -9,6 +9,7 @@ import com.partners.onboard.partneronboardws.model.DriverResponse;
 import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.service.DriverDocumentService;
 import com.partners.onboard.partneronboardws.service.DriverService;
+import com.partners.onboard.partneronboardws.service.NotificationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -27,6 +28,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/v1/driver")
@@ -39,6 +41,9 @@ public class DriverActionsController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private DriverDocumentService driverDocumentService;
@@ -56,7 +61,7 @@ public class DriverActionsController {
 
     @PostMapping("/generate-verify-link")
     public ResponseEntity<DriverEmailVerificationRequest> generateVerifyLink(@Param("email") @NotEmpty(message = "email cannot be empty")
-                                                                             @NotNull @Email(message = "please use a valid email") String email) throws ParseException {
+                                                                             @NotNull @Email(message = "please use a valid email") String email) throws InterruptedException {
 
         log.info("creating verify link for email: {}", email);
         DriverEmailVerificationRequest driverEmailVerificationRequest = DriverEmailVerificationRequest.builder().email(email)
@@ -66,6 +71,18 @@ public class DriverActionsController {
                 ).build();
 
         //send this payload to notifier-ws to email the user
+        CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                return notificationService.sendVerificationLink(email);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        completableFuture.whenComplete((req, throwable) -> {
+            if(throwable!=null) {
+                log.error("exception occurred in sending notification: {}", throwable.getMessage());
+            }
+        });
         return ResponseEntity.ok().location(URI.create(baseUrl+"/verify")).body(driverEmailVerificationRequest);
 
     }
