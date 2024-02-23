@@ -45,9 +45,6 @@ public class DriverActionsController {
     @Autowired
     private NotificationService notificationService;
 
-    @Autowired
-    private DriverDocumentService driverDocumentService;
-
 
     @PostMapping("/sign-up")
     public ResponseEntity<DriverResponse> signUp(@Param("email") @NotEmpty(message = "email cannot be empty")
@@ -91,36 +88,6 @@ public class DriverActionsController {
 
         log.info("got confirm verification request for driver : {}", driverEmailVerificationRequest.getEmail());
         return ResponseEntity.ok().body(driverService.verifyEmail(driverEmailVerificationRequest));
-    }
-
-    @GetMapping("/required-documents")
-    public ResponseEntity<List<String>> getRequiredDocuments(@Param("email") @NotEmpty @NotNull String email) throws DriverNotFoundException {
-
-        return ResponseEntity.ok(driverDocumentService.getRequiredDocuments(email));
-    }
-
-    @PostMapping(value = "/upload-document")
-    public ResponseEntity<ApiResponse> uploadDocuments(@RequestParam("id") @NotEmpty @NotNull String id,
-                                                       @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) throws DriverNotFoundException {
-
-        driverDocumentService.saveDocument(id, file, document);
-        return ResponseEntity.ok(ApiResponse.builder().message("documents uploaded successfully").build());
-    }
-
-    @PostMapping("/update-document")
-    public ResponseEntity<ApiResponse> updateDocument(@RequestParam("id") @NotEmpty @NotNull String id,
-                                                      @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) throws DriverNotFoundException {
-
-        driverDocumentService.updateDocument(id, file, document);
-        return ResponseEntity.ok(ApiResponse.builder().message("document was updated successfully").build());
-    }
-
-
-    @PostMapping("/trigger-document-verification")
-    public ResponseEntity<ApiResponse> triggerDocumentVerification(@Param("id") @NotEmpty @NotNull String id) throws DriverNotFoundException {
-
-        driverDocumentService.triggerDocumentVerification(id);
-        return ResponseEntity.ok(ApiResponse.builder().message("document verification is in progress").build());
     }
 
     @PostMapping("/ship-tracking-device")
