@@ -102,7 +102,7 @@ public class DriverActionsController {
 
     @PostMapping(value = "/upload-document")
     public ResponseEntity<ApiResponse> uploadDocuments(@RequestParam("id") @NotEmpty @NotNull String id,
-                                                       @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) {
+                                                       @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) throws DriverNotFoundException {
 
         driverDocumentService.saveDocument(id, file, document);
         return ResponseEntity.ok(ApiResponse.builder().message("documents uploaded successfully").build());
@@ -110,7 +110,7 @@ public class DriverActionsController {
 
     @PostMapping("/update-document")
     public ResponseEntity<ApiResponse> updateDocument(@RequestParam("id") @NotEmpty @NotNull String id,
-                                                      @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) {
+                                                      @RequestPart("file") MultipartFile file, @RequestPart("document") @Valid Document document) throws DriverNotFoundException {
 
         driverDocumentService.updateDocument(id, file, document);
         return ResponseEntity.ok(ApiResponse.builder().message("document was updated successfully").build());
@@ -118,13 +118,25 @@ public class DriverActionsController {
 
 
     @PostMapping("/trigger-document-verification")
-    public ResponseEntity<ApiResponse> triggerDocumentVerification(@Param("id") @NotEmpty @NotNull String id) {
+    public ResponseEntity<ApiResponse> triggerDocumentVerification(@Param("id") @NotEmpty @NotNull String id) throws DriverNotFoundException {
 
         driverDocumentService.triggerDocumentVerification(id);
         return ResponseEntity.ok(ApiResponse.builder().message("document verification is in progress").build());
     }
 
+    @PostMapping("/ship-tracking-device")
+    public ResponseEntity<ApiResponse> triggerShipTrackingDevice(@Param("id") @NotEmpty @NotNull String id) {
 
+        driverService.triggerShipTrackingDevice(id);
+        return ResponseEntity.ok(ApiResponse.builder().message("started ship tracking device process").build());
+    }
+
+    @PostMapping("/ready-to-drive")
+    public ResponseEntity<ApiResponse> markDriverReadyToDrive(@Param("id") @NotEmpty @NotNull String id) {
+
+        driverService.markDriverReadyToDrive(id);
+        return ResponseEntity.ok(ApiResponse.builder().message("driver marked as ready to drive").build());
+    }
 
     @GetMapping("/state")
     public ResponseEntity<Optional<Driver>> getDriverStateInfo(@Param("email") @NotEmpty @NotNull String email) {

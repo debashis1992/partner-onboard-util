@@ -9,6 +9,7 @@ import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
 import com.partners.onboard.partneronboardws.service.verification.impl.VerificationRules;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +18,15 @@ import java.util.concurrent.CompletableFuture;
 @Service @Slf4j
 public class BackgroundVerificationState implements DriverState {
 
+    @Autowired
     private VerificationRules verificationRules;
-    public BackgroundVerificationState(VerificationRules verificationRules) {
-        this.verificationRules = verificationRules;
-    }
+
     @Override
     public void processApplication(Driver driver) throws DriverStateFailureException {
 
         try {
+            // just add document collection state as completed
+            driver.getApplication().addCompletedApplicationInstances(DocumentsCollectionState.class);
             isValidRequest(driver);
             System.out.println("starting background verification process");
             driver.getApplication().setStatus(DriverOnboardingProcessStates.BACKGROUND_VERIFICATION.name()+ CompletionStates._STARTED);

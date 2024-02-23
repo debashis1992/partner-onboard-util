@@ -44,7 +44,7 @@ public class PartnerOnboardWsApplication {
 		startDocumentsCollection(driver);
 
 		// driver background verification
-		performDocumentsVerificationProcess(driver);
+		//performDocumentsVerificationProcess(driver);
 
 		// driver shipping of tracking device
 		shipTrackingDeviceToDriver(driver);
@@ -80,11 +80,11 @@ public class PartnerOnboardWsApplication {
 		return driver;
 	}
 
-	public Driver performDocumentsVerificationProcess(Driver driver) throws DriverStateFailureException {
-		DriverState state = driver.setAndGetDriverState(new BackgroundVerificationState(verificationRules));
-		state.processApplication(driver);
-		return driver;
-	}
+//	public Driver performDocumentsVerificationProcess(Driver driver) throws DriverStateFailureException {
+//		DriverState state = driver.setAndGetDriverState(new BackgroundVerificationState(verificationRules));
+//		state.processApplication(driver);
+//		return driver;
+//	}
 
 	public Driver shipTrackingDeviceToDriver(Driver driver) throws DriverStateFailureException {
 		DriverState state = driver.setAndGetDriverState(new ShipTrackingDeviceState());

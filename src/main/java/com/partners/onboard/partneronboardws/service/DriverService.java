@@ -5,9 +5,7 @@ import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.DriverEmailVerificationRequest;
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
-import com.partners.onboard.partneronboardws.service.state.impl.AddProfileInfoState;
-import com.partners.onboard.partneronboardws.service.state.impl.DocumentsCollectionState;
-import com.partners.onboard.partneronboardws.service.state.impl.VerifyProfileState;
+import com.partners.onboard.partneronboardws.service.state.impl.*;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +38,12 @@ public class DriverService {
 
     @Autowired
     private DocumentsCollectionState documentsCollectionState;
+
+    @Autowired
+    private ShipTrackingDeviceState shipTrackingDeviceState;
+
+    @Autowired
+    private ReadyToRideState readyToRideState;
 
     @Autowired
     private DriverRepository driverRepository;
@@ -105,4 +109,27 @@ public class DriverService {
         }
     }
 
+
+    public void triggerShipTrackingDevice(String id) {
+        //initiate ship tracking device
+
+        Optional<Driver> driverOptional = driverRepository.getDriver(id);
+        if(driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+
+            DriverState state = driver.setAndGetDriverState(shipTrackingDeviceState);
+            state.processApplication(driver);
+        }
+    }
+
+
+    public void markDriverReadyToDrive(String id) {
+        Optional<Driver> driverOptional = driverRepository.getDriver(id);
+        if(driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+
+            DriverState state = driver.setAndGetDriverState(readyToRideState);
+            state.processApplication(driver);
+        }
+    }
 }
