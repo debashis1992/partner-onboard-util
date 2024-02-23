@@ -67,7 +67,6 @@ public class DriverActionsController {
         DriverEmailVerificationRequest driverEmailVerificationRequest = DriverEmailVerificationRequest.builder().email(email)
                 .callbackUrlTimestamp(
                         new Date()
-                        //DateUtils.getCurrentDateBasedOnDateSerializerFormat()
                 ).build();
 
         //send this payload to notifier-ws to email the user
