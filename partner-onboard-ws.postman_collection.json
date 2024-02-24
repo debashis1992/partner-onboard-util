@@ -69,7 +69,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"d2011das@gmail.com\",\n    \"callbackUrlTimestamp\": \"23-02-2024@08:39:015\"\n}",
+					"raw": "{\n    \"email\": \"d2011das@gmail.com\",\n    \"callbackUrlTimestamp\": \"24-02-2024@11:07:003\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -94,6 +94,62 @@
 							"key": "email",
 							"value": "d2011das@gmail.com",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ship tracking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/ship-tracking-device?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"ship-tracking-device"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ready to drive",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/ready-to-drive?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"ready-to-drive"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
 						}
 					]
 				}
@@ -158,7 +214,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/driver/required-documents?email=d2011das@gmail.com",
+					"raw": "http://localhost:8080/api/v1/driver-documents/required?email=d2011das@gmail.com",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -167,8 +223,8 @@
 					"path": [
 						"api",
 						"v1",
-						"driver",
-						"required-documents"
+						"driver-documents",
+						"required"
 					],
 					"query": [
 						{
@@ -187,7 +243,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das\",\n    \"phone\": \"834324232\",\n    \"pin\": \"343\"\n}",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -195,7 +251,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/driver-info/add?id=4fab6246-d947-4bc8-9d09-ab4373641125",
+					"raw": "http://localhost:8080/api/v1/driver-info/add?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -210,7 +266,83 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "4fab6246-d947-4bc8-9d09-ab4373641125"
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update profile-info",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das 2342\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-info/update?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-info",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get profile-info",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das 2342\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-info?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-info"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
 						}
 					]
 				}
@@ -236,24 +368,24 @@
 							"key": "file",
 							"contentType": "",
 							"type": "file",
-							"src": "/Users/debashis/Downloads/output copy 3.pdf"
+							"src": "/Users/debashis/Downloads/output copy 2.pdf"
 						},
 						{
 							"key": "document",
-							"value": "\n{\n    \"documentName\": \"PAN\",\n    \"documentType\": \"DRIVER\",\n    \"attributes\": {\n        \"pan_number\": \"4534dfsdfs\",\n        \"address\": \"pune\",\n        \"issue_date\": \"23/12/1992\"\n    }\n}\n\n",
+							"value": "{\n    \"documentName\": \"VEHICLE_INSURANCE\",\n    \"documentType\": \"VEHICLE\",\n    \"attributes\": {\n        \"vehicle_insurance_number\": \"4534dfsdfs\",\n        \"address\": \"pune\",\n        \"issue_date\": \"23/12/1992\"\n    }\n}",
 							"contentType": "application/json",
 							"type": "text"
 						},
 						{
 							"key": "id",
-							"value": "4fab6246-d947-4bc8-9d09-ab4373641125",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885",
 							"contentType": "",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/driver/upload-document",
+					"raw": "http://localhost:8080/api/v1/driver-documents/upload",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -262,8 +394,8 @@
 					"path": [
 						"api",
 						"v1",
-						"driver",
-						"upload-document"
+						"driver-documents",
+						"upload"
 					],
 					"query": [
 						{
@@ -279,7 +411,7 @@
 		{
 			"name": "update document",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [
 					{
 						"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
@@ -295,24 +427,24 @@
 							"key": "file",
 							"contentType": "",
 							"type": "file",
-							"src": "/Users/debashis/Downloads/output copy 2.pdf"
+							"src": "/Users/debashis/Downloads/output copy.pdf"
 						},
 						{
 							"key": "document",
-							"value": "{\n    \"documentName\": \"PAN\",\n    \"documentType\": \"DRIVER\",\n    \"attributes\": {\n        \"pan_number\": \"121231232135\",\n        \"address\": \"pune\",\n        \"issue_date\": \"23/12/2011\"\n    }\n}\n\n",
+							"value": "{\n    \"documentName\": \"VEHICLE_INSURANCE\",\n    \"documentType\": \"VEHICLE\",\n    \"attributes\": {\n        \"vehicle_insurance_number\": \"22222\",\n        \"address\": \"bangalore\",\n        \"issue_date\": \"23/12/1992\"\n    }\n}",
 							"contentType": "application/json",
 							"type": "text"
 						},
 						{
 							"key": "id",
-							"value": "4fab6246-d947-4bc8-9d09-ab4373641125",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885",
 							"contentType": "",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/driver/update-document",
+					"raw": "http://localhost:8080/api/v1/driver-documents/update",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -321,8 +453,8 @@
 					"path": [
 						"api",
 						"v1",
-						"driver",
-						"update-document"
+						"driver-documents",
+						"update"
 					],
 					"query": [
 						{
@@ -348,7 +480,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/driver/trigger-document-verification?id=4fab6246-d947-4bc8-9d09-ab4373641125",
+					"raw": "http://localhost:8080/api/v1/driver-documents/verify?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -357,13 +489,13 @@
 					"path": [
 						"api",
 						"v1",
-						"driver",
-						"trigger-document-verification"
+						"driver-documents",
+						"verify"
 					],
 					"query": [
 						{
 							"key": "id",
-							"value": "4fab6246-d947-4bc8-9d09-ab4373641125"
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
 						}
 					]
 				}
