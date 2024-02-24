@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: partners-onboarding-ws
+
+url:
+  base: http://localhost:8080/api/v1/driver
+
+ttl:
+  verification-link-in-seconds: 900

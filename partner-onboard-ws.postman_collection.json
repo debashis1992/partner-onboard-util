@@ -1,0 +1,506 @@
+{
+	"info": {
+		"_postman_id": "e1c6af43-bf7a-4e12-9b55-d59483af1d13",
+		"name": "partner-onboard-ws",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2164305"
+	},
+	"item": [
+		{
+			"name": "sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/sign-up?email=d2011das@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"sign-up"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "d2011das@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate verify link",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/generate-verify-link?email=d2011das@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"generate-verify-link"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "d2011das@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"d2011das@gmail.com\",\n    \"callbackUrlTimestamp\": \"24-02-2024@11:07:003\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/verify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"verify"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "d2011das@gmail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ship tracking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/ship-tracking-device?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"ship-tracking-device"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ready to drive",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/ready-to-drive?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"ready-to-drive"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "state",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver/state?email=d2011das@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver",
+						"state"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "d2011das@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "required documents",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-documents/required?email=d2011das@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-documents",
+						"required"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "d2011das@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add profile-info",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-info/add?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-info",
+						"add"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update profile-info",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das 2342\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-info/update?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-info",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get profile-info",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"debashis\",\n    \"lastName\": \"das 2342\",\n    \"phone\": \"834324232\",\n    \"pin\": \"3434333\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-info?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-info"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload document",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+						"key": "Content-Type",
+						"value": "application/octet-stream",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "",
+							"type": "file",
+							"src": "/Users/debashis/Downloads/output copy 2.pdf"
+						},
+						{
+							"key": "document",
+							"value": "{\n    \"documentName\": \"VEHICLE_INSURANCE\",\n    \"documentType\": \"VEHICLE\",\n    \"attributes\": {\n        \"vehicle_insurance_number\": \"4534dfsdfs\",\n        \"address\": \"pune\",\n        \"issue_date\": \"23/12/1992\"\n    }\n}",
+							"contentType": "application/json",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+							"contentType": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-documents/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-documents",
+						"upload"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update document",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+						"key": "Content-Type",
+						"value": "application/octet-stream",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "",
+							"type": "file",
+							"src": "/Users/debashis/Downloads/output copy.pdf"
+						},
+						{
+							"key": "document",
+							"value": "{\n    \"documentName\": \"VEHICLE_INSURANCE\",\n    \"documentType\": \"VEHICLE\",\n    \"attributes\": {\n        \"vehicle_insurance_number\": \"22222\",\n        \"address\": \"bangalore\",\n        \"issue_date\": \"23/12/1992\"\n    }\n}",
+							"contentType": "application/json",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+							"contentType": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-documents/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-documents",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "trigger document verification",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/octet-stream",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/driver-documents/verify?id=1a2d5e86-dcf9-482b-90ee-a7ca01460885",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"driver-documents",
+						"verify"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1a2d5e86-dcf9-482b-90ee-a7ca01460885"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
