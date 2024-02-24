@@ -4,10 +4,12 @@ import com.partners.onboard.partneronboardws.constant.DocumentConstants;
 import com.partners.onboard.partneronboardws.exception.DriverNotFoundException;
 import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.records.RequiredDocumentResponse;
+import com.partners.onboard.partneronboardws.repository.DocumentFileRepository;
 import com.partners.onboard.partneronboardws.repository.DocumentRepository;
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.BackgroundVerificationState;
+import com.partners.onboard.partneronboardws.service.state.impl.DocumentsCollectionState;
 import com.partners.onboard.partneronboardws.service.verification.VerificationStrategy;
 import com.partners.onboard.partneronboardws.service.verification.impl.VerificationRules;
 import com.partners.onboard.partneronboardws.utils.DriverUtils;
@@ -17,13 +19,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class DriverDocumentService {
     @Autowired
     private DriverRepository driverRepository;
+
+    @Autowired
+    private DocumentFileRepository documentFileRepository;
 
     @Autowired
     private DocumentRepository documentRepository;
@@ -33,6 +37,9 @@ public class DriverDocumentService {
 
     @Autowired
     private BackgroundVerificationState backgroundVerificationState;
+
+    @Autowired
+    private DocumentsCollectionState documentsCollectionState;
 
     @Autowired
     private DriverUtils driverUtils;
@@ -59,9 +66,7 @@ public class DriverDocumentService {
         // check if the prev state from document collection state is already completed
         d.getDriverState().isValidRequest(d);
 
-        //todo: set document collection as the current driver state
-        //todo: call document collection state to perform this action
-
+        d.setAndGetDriverState(documentsCollectionState);
         if (DocumentConstants.DOCUMENT_DRIVER.equals(document.getDocumentType())) {
             document.setDocumentType(DocumentConstants.DOCUMENT_DRIVER);
 
@@ -70,10 +75,11 @@ public class DriverDocumentService {
         }
 
         document.setCreatedDate(new Date());
-        String documentLocationId = documentRepository.save(file);
+        var documentLocationId = documentFileRepository.save(file);
         document.setDocumentLocationId(documentLocationId);
-        d.getDocuments().add(document);
+        documentRepository.save(document);
 
+        d.getDocuments().add(document);
 
     }
 
@@ -84,21 +90,22 @@ public class DriverDocumentService {
         // check if the prev state from document collection state is already completed
         driver.getDriverState().isValidRequest(driver);
 
-        String documentLocationId = documentRepository.save(file);
+        var documentLocationId = documentFileRepository.save(file);
 
-        var documentOptional = driver.getDocuments().stream().filter(d -> d.getDocumentId().equals(document.getDocumentId()))
+        var documentOptional = driver.getDocuments().stream()
+                .filter(d -> d.getDocumentId().equals(document.getDocumentId()))
                 .findFirst();
 
         if (documentOptional.isPresent()) {
-            Document alreadySavedDocument = documentOptional.get();
+            var alreadySavedDocument = documentOptional.get();
             alreadySavedDocument.setDocumentLocationId(documentLocationId);
             alreadySavedDocument.setUpdatedDate(new Date());
             alreadySavedDocument.setAttributes(document.getAttributes());
+            documentRepository.save(alreadySavedDocument);
 
-            //todo: update the already saved document back to document repository
         } else {
             //if no such document was present, just delete the multipart file from document storage
-            documentRepository.delete(documentLocationId);
+            documentFileRepository.delete(documentLocationId);
         }
     }
 

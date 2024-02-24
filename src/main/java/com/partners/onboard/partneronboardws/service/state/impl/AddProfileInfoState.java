@@ -44,7 +44,7 @@ public class AddProfileInfoState implements DriverState {
                 }
             });
 
-            System.out.println("completed adding profile information");
+            log.info("completed adding profile information");
             driver.getApplication().setStatus(DriverProcessStates.PROFILE_INFO + CompletionStates._COMPLETED.toString());
         } catch (RuntimeException e) {
             log.error("Exception occurred: {}", e.getMessage());
