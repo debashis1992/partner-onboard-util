@@ -14,6 +14,7 @@ public class DriverUtils {
     @Autowired
     private DriverRepository driverRepository;
 
+
     public Driver getDriverDetails(String id) throws DriverNotFoundException {
         Optional<Driver> driverOptional = driverRepository.getDriver(id);
         if(driverOptional.isPresent()) {

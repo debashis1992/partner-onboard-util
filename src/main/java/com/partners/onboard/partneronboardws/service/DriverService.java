@@ -1,24 +1,24 @@
 package com.partners.onboard.partneronboardws.service;
 
+import com.partners.onboard.partneronboardws.exception.DriverAlreadyExistsException;
+import com.partners.onboard.partneronboardws.exception.DriverNotFoundException;
+import com.partners.onboard.partneronboardws.exception.ServiceApiFailureException;
 import com.partners.onboard.partneronboardws.exception.VerifyLinkExpiredException;
 import com.partners.onboard.partneronboardws.model.Driver;
 import com.partners.onboard.partneronboardws.model.DriverEmailVerificationRequest;
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
-import com.partners.onboard.partneronboardws.service.state.impl.*;
+import com.partners.onboard.partneronboardws.service.state.impl.AddProfileInfoState;
+import com.partners.onboard.partneronboardws.service.state.impl.ReadyToRideState;
+import com.partners.onboard.partneronboardws.service.state.impl.ShipTrackingDeviceState;
+import com.partners.onboard.partneronboardws.service.state.impl.VerifyProfileState;
+import com.partners.onboard.partneronboardws.utils.DriverUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,9 +37,6 @@ public class DriverService {
     private AddProfileInfoState addProfileInfoState;
 
     @Autowired
-    private DocumentsCollectionState documentsCollectionState;
-
-    @Autowired
     private ShipTrackingDeviceState shipTrackingDeviceState;
 
     @Autowired
@@ -51,85 +48,88 @@ public class DriverService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private DriverUtils driverUtils;
+
     public Driver signUp(String email) {
         // driver signup
         // creating a new default driver
         // creating a new application for the driver onboarding process
+
+        Optional<Driver> driverOptional = driverRepository.getDriverByEmail(email);
+        if(driverOptional.isPresent()) {
+            throw new DriverAlreadyExistsException("email already in-use. Please provide a different email");
+        }
 
         Driver driver = new Driver();
         driver.setEmail(email);
         driverRepository.addDriver(driver);
         DriverState state = driver.getDriverState();
         state.processApplication(driver);
-        log.info("Created a new driver with id: "+driver.getId());
+        log.info("Created a new driver with id: " + driver.getId());
 
-        CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> notificationService.sendEmail());
-        completableFuture.whenComplete((res, throwable) -> {
-            if(throwable==null) {
-                System.out.println("sent verification email");
-            } else {
-                log.error("Exception occurred while sending email: {}", throwable.getMessage());
-            }
-        });
-
+        try {
+            generateAndSendVerifyLink(email);
+        } catch (DriverNotFoundException e) {
+            log.error("recently added driver with email:{} was not found. Something went wrong!",email);
+        }
         return driver;
     }
 
+    public DriverEmailVerificationRequest generateAndSendVerifyLink(String email) throws DriverNotFoundException {
+        driverUtils.getDriverDetailsByEmail(email);
 
-    public Driver verifyEmail(DriverEmailVerificationRequest driverEmailVerificationRequest) throws VerifyLinkExpiredException {
+        log.info("creating verify link for email: {}", email);
 
-        Optional<Driver> driver = driverRepository.getDriverByEmail(driverEmailVerificationRequest.getEmail());
-        if(driver.isPresent()) {
-            DriverState driverState = driver.get().setAndGetDriverState(verifyProfileState);
-//            driverState.processApplication(driver.get());
-            verifyProfileState.processApplication(driver.get());
-            Driver driverOut = verifyProfileState.processApplication(driverEmailVerificationRequest, driver.get());
-            return driverOut;
-        }
+        //send this payload to notifier-ws to email the user
+        DriverEmailVerificationRequest driverEmailVerificationRequest = DriverEmailVerificationRequest.builder().email(email)
+                .callbackUrlTimestamp(new Date()).build();
 
-        throw new VerifyLinkExpiredException("driver with email "+driverEmailVerificationRequest.getEmail()+" was not found!");
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendEmail(email, driverEmailVerificationRequest);
+                log.info("successfully sent verification link");
+            } catch (ServiceApiFailureException e) {
+                log.error("Exception occurred while sending email: {}", e.getMessage());
+            }
+        });
+
+        return driverEmailVerificationRequest;
     }
 
 
-    public Optional<Driver> getDriverDetails(String email) {
-        return driverRepository.getDriverByEmail(email);
-    }
+    public Driver verifyEmail(DriverEmailVerificationRequest driverEmailVerificationRequest) throws VerifyLinkExpiredException, DriverNotFoundException {
 
-    public void addProfileInfo(String id, Map<String, String> attributesMap) {
+        log.info("got confirm verification request for driver : {}", driverEmailVerificationRequest.getEmail());
 
-        Optional<Driver> driverOptional = driverRepository.getDriver(id);
-        if(driverOptional.isPresent()) {
-            Driver driver = driverOptional.get();
+        Driver driver = driverUtils.getDriverDetailsByEmail(driverEmailVerificationRequest.getEmail());
+        DriverState state = driver.setAndGetDriverState(verifyProfileState);
 
-            addProfileInfoState.processApplication(driver);
-            addProfileInfoState.updateDriverApplication(driver, attributesMap);
-
-            //after profile info is added, we'll make the current state as DocumentCollectionState
-            driver.setAndGetDriverState(documentsCollectionState);
-        }
+        state.processApplication(driver);
+        Driver driverOut = verifyProfileState.processApplication(driverEmailVerificationRequest, driver);
+        return driverOut;
     }
 
 
-    public void triggerShipTrackingDevice(String id) {
+    public void triggerShipTrackingDevice(String id) throws DriverNotFoundException {
         //initiate ship tracking device
 
-        Optional<Driver> driverOptional = driverRepository.getDriver(id);
-        if(driverOptional.isPresent()) {
-            Driver driver = driverOptional.get();
+        Driver driver = driverUtils.getDriverDetails(id);
 
-            DriverState state = driver.setAndGetDriverState(shipTrackingDeviceState);
-            state.processApplication(driver);
-        }
+        DriverState state = driver.setAndGetDriverState(shipTrackingDeviceState);
+        state.processApplication(driver);
     }
 
 
-    public void markDriverReadyToDrive(String id) {
-        Optional<Driver> driverOptional = driverRepository.getDriver(id);
-        if(driverOptional.isPresent()) {
-            Driver driver = driverOptional.get();
+    public void markDriverReadyToDrive(String id) throws DriverNotFoundException {
+        Driver driver = driverUtils.getDriverDetails(id);
 
-            DriverState state = driver.setAndGetDriverState(readyToRideState);
-            state.processApplication(driver);
-        }
+        DriverState state = driver.setAndGetDriverState(readyToRideState);
+        state.processApplication(driver);
+
+    }
+
+    public Driver getDriverDetails(String email) throws DriverNotFoundException {
+        return driverUtils.getDriverDetailsByEmail(email);
     }
 }

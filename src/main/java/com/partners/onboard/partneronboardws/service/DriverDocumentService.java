@@ -3,6 +3,7 @@ package com.partners.onboard.partneronboardws.service;
 import com.partners.onboard.partneronboardws.constant.DocumentConstants;
 import com.partners.onboard.partneronboardws.exception.DriverNotFoundException;
 import com.partners.onboard.partneronboardws.model.documents.Document;
+import com.partners.onboard.partneronboardws.records.RequiredDocumentResponse;
 import com.partners.onboard.partneronboardws.repository.DocumentRepository;
 import com.partners.onboard.partneronboardws.repository.DriverRepository;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,15 +37,18 @@ public class DriverDocumentService {
     @Autowired
     private DriverUtils driverUtils;
 
+    public RequiredDocumentResponse getRequiredDocuments(String email) throws DriverNotFoundException {
 
-    public List<String> getRequiredDocuments(String email) throws DriverNotFoundException {
+        var driver = driverUtils.getDriverDetailsByEmail(email);
+        int cityPin = driver.getCityPin();
+        var verificationStrategies = verificationRules.getRules(cityPin);
 
-            var driver = driverUtils.getDriverDetailsByEmail(email);
-            int cityPin = driver.getCityPin();
-            var verificationStrategies = verificationRules.getRules(cityPin);
+        if (verificationStrategies.isEmpty()) {
+            return new RequiredDocumentResponse("no documents found for the city pin", new ArrayList<>());
+        }
 
-            return verificationStrategies.stream().map(VerificationStrategy::requiredDocument)
-                    .collect(Collectors.toList());
+        return new RequiredDocumentResponse("success", verificationStrategies.stream().map(VerificationStrategy::requiredDocument)
+                .collect(Collectors.toList()));
     }
 
     public void saveDocument(String id, MultipartFile file, Document document) throws DriverNotFoundException {
@@ -51,57 +56,60 @@ public class DriverDocumentService {
 
         var d = driverUtils.getDriverDetails(id);
 
-            // check if the prev state from document collection state is already completed
-            d.getDriverState().isValidRequest(d);
+        // check if the prev state from document collection state is already completed
+        d.getDriverState().isValidRequest(d);
 
-            if(DocumentConstants.DOCUMENT_DRIVER.equals(document.getDocumentType())) {
-                document.setDocumentType(DocumentConstants.DOCUMENT_DRIVER);
+        //todo: set document collection as the current driver state
+        //todo: call document collection state to perform this action
 
-            }
-            else if(DocumentConstants.DOCUMENT_VEHICLE.equals(document.getDocumentType())) {
-                document.setDocumentType(DocumentConstants.DOCUMENT_VEHICLE);
-            }
+        if (DocumentConstants.DOCUMENT_DRIVER.equals(document.getDocumentType())) {
+            document.setDocumentType(DocumentConstants.DOCUMENT_DRIVER);
 
-            document.setCreatedDate(new Date());
-            String documentLocationId = documentRepository.save(file);
-            document.setDocumentLocationId(documentLocationId);
-            d.getDocuments().add(document);
+        } else if (DocumentConstants.DOCUMENT_VEHICLE.equals(document.getDocumentType())) {
+            document.setDocumentType(DocumentConstants.DOCUMENT_VEHICLE);
+        }
+
+        document.setCreatedDate(new Date());
+        String documentLocationId = documentRepository.save(file);
+        document.setDocumentLocationId(documentLocationId);
+        d.getDocuments().add(document);
 
 
     }
 
     public void updateDocument(String id, MultipartFile file, Document document) throws DriverNotFoundException {
 
-            var driver = driverUtils.getDriverDetails(id);
+        var driver = driverUtils.getDriverDetails(id);
 
-            // check if the prev state from document collection state is already completed
-            driver.getDriverState().isValidRequest(driver);
+        // check if the prev state from document collection state is already completed
+        driver.getDriverState().isValidRequest(driver);
 
-            String documentLocationId = documentRepository.save(file);
+        String documentLocationId = documentRepository.save(file);
 
-            var documentOptional = driver.getDocuments().stream().filter(d -> d.getDocumentId().equals(document.getDocumentId()))
-                    .findFirst();
+        var documentOptional = driver.getDocuments().stream().filter(d -> d.getDocumentId().equals(document.getDocumentId()))
+                .findFirst();
 
-            if(documentOptional.isPresent()) {
-                Document alreadySavedDocument = documentOptional.get();
-                alreadySavedDocument.setDocumentLocationId(documentLocationId);
-                alreadySavedDocument.setUpdatedDate(new Date());
-                alreadySavedDocument.setAttributes(document.getAttributes());
-            }
-            else {
-                //if no such document was present, just delete the multipart file from document storage
-                documentRepository.delete(documentLocationId);
-            }
+        if (documentOptional.isPresent()) {
+            Document alreadySavedDocument = documentOptional.get();
+            alreadySavedDocument.setDocumentLocationId(documentLocationId);
+            alreadySavedDocument.setUpdatedDate(new Date());
+            alreadySavedDocument.setAttributes(document.getAttributes());
+
+            //todo: update the already saved document back to document repository
+        } else {
+            //if no such document was present, just delete the multipart file from document storage
+            documentRepository.delete(documentLocationId);
+        }
     }
 
     public void triggerDocumentVerification(String id) throws DriverNotFoundException {
 
-            var driver = driverUtils.getDriverDetails(id);
+        var driver = driverUtils.getDriverDetails(id);
 
-            // when trigger document verification is called
-            // then set the currentState as document verification state
+        // when trigger document verification is called
+        // then set the currentState as document verification state
 
-            DriverState driverState = driver.setAndGetDriverState(backgroundVerificationState);
-            driverState.processApplication(driver);
+        DriverState driverState = driver.setAndGetDriverState(backgroundVerificationState);
+        driverState.processApplication(driver);
     }
 }

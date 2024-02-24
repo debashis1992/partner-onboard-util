@@ -39,7 +39,7 @@ public class AddProfileInfoState implements DriverState {
                     case "firstName" -> driver.setFirstName(v);
                     case "lastName" -> driver.setLastName(v);
                     case "phone" -> driver.setPhoneNumber(Integer.parseInt(v));
-                    case "email" -> driver.setEmail(v);
+                    //case "email" -> driver.setEmail(v);
                     case "pin" -> driver.setCityPin(Integer.parseInt(v));
                 }
             });

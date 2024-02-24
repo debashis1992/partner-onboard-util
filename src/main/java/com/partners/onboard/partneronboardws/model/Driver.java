@@ -3,13 +3,16 @@ package com.partners.onboard.partneronboardws.model;
 import com.partners.onboard.partneronboardws.model.documents.Document;
 import com.partners.onboard.partneronboardws.service.state.DriverState;
 import com.partners.onboard.partneronboardws.service.state.impl.SignupApplicationState;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Driver implements ModuleClient {
 
     String id;
@@ -19,7 +22,6 @@ public class Driver implements ModuleClient {
 
     DriverState driverState;
     OnboardingApplication application;
-
 
     List<Document> documents;
 
