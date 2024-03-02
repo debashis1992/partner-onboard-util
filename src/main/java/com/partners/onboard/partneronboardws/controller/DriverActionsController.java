@@ -8,6 +8,8 @@ import com.partners.onboard.partneronboardws.model.DriverResponse;
 import com.partners.onboard.partneronboardws.records.ApiResponse;
 import com.partners.onboard.partneronboardws.service.DriverService;
 import com.partners.onboard.partneronboardws.service.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,8 @@ import java.net.URI;
 @RequestMapping("/api/v1/driver")
 @Validated
 @Slf4j
+@Tag(name = "Driver Actions API", description = "These APIs are to trigger " +
+        "all kinds of driver states movement")
 public class DriverActionsController {
 
     @Value("${url.base}")
@@ -38,6 +42,7 @@ public class DriverActionsController {
 
 
     @PostMapping("/sign-up")
+    @Operation(summary = "sign-up a new driver")
     public ResponseEntity<DriverResponse> signUp(@Param("email") @NotEmpty(message = "email cannot be empty")
                                                      @NotNull @Email(message = "please use a valid email") String email) {
         Driver driver = driverService.signUp(email);
@@ -48,6 +53,7 @@ public class DriverActionsController {
     }
 
     @PostMapping("/generate-verify-link")
+    @Operation(summary = "generates a verification  link which is send to given emailId")
     public ResponseEntity<DriverEmailVerificationRequest> generateVerifyLink(@Param("email") @NotEmpty(message = "email cannot be empty")
                                                                              @NotNull @Email(message = "please use a valid email") String email) throws DriverNotFoundException {
 
@@ -56,6 +62,7 @@ public class DriverActionsController {
     }
 
     @PostMapping("/verify")
+    @Operation(summary = "Verify a user emailId")
     public ResponseEntity<Driver> confirmDriverEmailLinkVerification(@RequestBody @Validated DriverEmailVerificationRequest driverEmailVerificationRequest)
             throws VerifyLinkExpiredException, DriverNotFoundException {
 
@@ -63,6 +70,7 @@ public class DriverActionsController {
     }
 
     @PostMapping("/ship-tracking-device")
+    @Operation(summary = "Trigger shipment of tracking device")
     public ResponseEntity<ApiResponse> triggerShipTrackingDevice(@Param("id") @NotEmpty @NotNull String id) throws DriverNotFoundException {
 
         driverService.triggerShipTrackingDevice(id);
@@ -70,6 +78,7 @@ public class DriverActionsController {
     }
 
     @PostMapping("/ready-to-drive")
+    @Operation(summary = "Mark a driver as ready-to-drive")
     public ResponseEntity<ApiResponse> markDriverReadyToDrive(@Param("id") @NotEmpty @NotNull String id) throws DriverNotFoundException {
 
         driverService.markDriverReadyToDrive(id);
@@ -77,6 +86,7 @@ public class DriverActionsController {
     }
 
     @GetMapping("/state")
+    @Operation(summary = "Get the current driver info, state, completed states")
     public ResponseEntity<Driver> getDriverStateInfo(@Param("email") @NotEmpty @NotNull String email) throws DriverNotFoundException {
         return ResponseEntity.ok().body(driverService.getDriverDetails(email));
     }

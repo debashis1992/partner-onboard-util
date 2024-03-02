@@ -6,6 +6,8 @@ import com.partners.onboard.partneronboardws.records.ApiResponse;
 import com.partners.onboard.partneronboardws.records.DriverInfoResponse;
 import com.partners.onboard.partneronboardws.service.DriverInfoService;
 import com.partners.onboard.partneronboardws.service.DriverService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/driver-info")
+@Tag(name = "Driver Info API", description = "These APIs are going to be used for all kinds of " +
+        "CRUD operations related to a driver info")
 public class DriverInfoController {
 
     @Autowired
@@ -27,6 +31,7 @@ public class DriverInfoController {
     private ObjectMapper objectMapper;
 
     @PostMapping("/add")
+    @Operation(summary = "add driver info")
     public ResponseEntity<ApiResponse> addProfileInfo(@Param("id") @NotEmpty @NotNull String id,
                                                       @RequestBody String requestBody) throws IOException, DriverNotFoundException {
 
@@ -37,6 +42,7 @@ public class DriverInfoController {
     }
 
     @PutMapping("/update")
+    @Operation(summary = "Update any already existing info")
     public void updateProfileInfo(@Param("id") @NotEmpty @NotNull String id, @RequestBody String requestBody) throws IOException, DriverNotFoundException {
 
         var attributes = objectMapper.readValue(requestBody, Map.class);
@@ -45,8 +51,8 @@ public class DriverInfoController {
     }
 
     @GetMapping
+    @Operation(summary = "Get the current driver info")
     public ResponseEntity<DriverInfoResponse> getProfileInfo(@Param("id") @NotEmpty @NotNull String id) throws DriverNotFoundException {
-
         return ResponseEntity.ok(driverInfoService.getDriverInfo(id));
     }
 }
